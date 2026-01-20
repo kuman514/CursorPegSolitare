@@ -9,6 +9,8 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
     - 구현 환경
       - Vite + React + TypeScript + Zustand를 사용한다.
       - Vite, React, TypeScript, Zustand는 반드시 최신 버전을 사용한다.
+      - 모듈은 되도록 TypeScript 파일로 작성한다. 즉, `.ts` 파일과 `.tsx` 파일로 작성한다.
+      - CSS Modules를 사용한다. 각 TypeScript 모듈과 같은 폴더에 놓아 TypeScript 모듈이 import할 수 있게끔 한다.
     - 테스트 환경
       - Vitest + React Testing Library를 사용한다.
       - Vitest와 React Testing Library는 반드시 최신 버전을 사용한다.
@@ -21,6 +23,8 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
       - IIFE나 React JSX 이벤트 핸들러 함수같이 익명 함수를 사용해야 하는 곳에는 반드시 화살표 함수를 사용한다.
       - Path Aliasing을 사용한다. `src/`로 시작하는 경로는 `^/`로 시작해야 한다.
       - JSX의 속성값 등등에 들어가는 문자열은 큰따옴표로 감싸고, 그 외(주로 JavaScript 부분) 문자열은 작은따옴표로 감싼다.
+      - React 커스텀 훅을 만들 때, 훅의 이름은 무조건 `use`로 시작한다.
+        - 예: 보드게임의 진행 상황에 관한 커스텀 훅의 이름을 `useGameStatus`로 정한다.
       - 아래는 카멜케이스를 사용한다.
         - 함수 내 지역 변수명
           - boolean 타입을 가지는 변수명은 무조건 `is`로 시작한다.
@@ -38,11 +42,12 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
         - 모듈의 파일명
   - 모듈 정의
     - 전반적인 앱 렌더링 정의
+      - `1rem`이 `16px`가 되도록 한다.
       - 모든 엘리먼트의 스타일은 다음과 같다.
         - `box-sizing: border-box`
         - `margin: 0`
       - `body`의 스타일은 다음과 같다.
-        - `background: white`
+        - `background-color: white`
         - `color: black`
         - `width: 100vw`
         - `height: 100dvh`
@@ -57,22 +62,78 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
           - `justify-content: center`
           - `align-items: center`
         - 하위 엘리먼트
-          - 어떤 컴포넌트가 들어가는가? (컴포넌트의 특징은 아래에 기술한다)
+          - 어떤 컴포넌트가 들어가는가? (컴포넌트의 특징은 "컴포넌트 정의"에서 기술한다)
             - 타이틀
             - 보드
             - 하단 컨트롤 패널
           - 하위 엘리먼트끼리의 간격은 `main`의 한 변의 길이의 `3%`로 한다.
     - 컴포넌트 정의
       - 타이틀
+        - `h1` 엘리먼트이다.
+        - `CursorPegSolitare`라는 Text Content를 가진다.
+        - `font-weight: 700`이다.
+        - 스크린이 640px 미만일 경우 폰트 사이즈는 `1rem`, 그 이상일 경우 `1.5rem`이어야 한다.
       - 보드
+        - `div` 엘리먼트이다.
+        - 다음과 같은 스타일을 가진다.
+          - `width: 75%`
+          - `height: 75%`
+          - `display: grid`
+          - `grid-template-rows: repeat(9, 1fr)`
+          - `grid-template-columns: repeat(9, 1fr)`
+        - 총 81개의 타일 버튼을 가진다. (타일 버튼의 특징은 "타일 버튼"에서 기술한다)
       - 하단 컨트롤 패널
+        - `div` 엘리먼트이다.
+        - 다음과 같은 스타일을 가진다.
+          - `display: flex`
+          - `flex-direction: row`
+          - `justify-content: center`
+          - `align-items: center`
+          - `gap: 0.5rem`
+          - `border-radius: 0.5rem`
+        - 세 가지 상태를 가지며, 상태에 따라 다음 엘리먼트를 가진다.
+          - 초기 상태
+            - 실행 취소 UI 버튼 (비활성화)
+            - 리셋 UI 버튼 (비활성화)
+          - 게임 진행 중
+            - 실행 취소 UI 버튼
+            - 리셋 UI 버튼
+          - 게임 종료
+            - 실행 취소 UI 버튼 (비활성화)
+            - 리셋 UI 버튼
       - UI 버튼
+        - `button` 엘리먼트이다.
+        - 다음과 같은 스타일을 가진다.
+          - 우선 `all: unset`으로 모든 기존 속성을 초기화한다.
+          - `color: white`
+          - `font-size: 1rem`
+          - `padding: 0.5rem 0.75rem`
+          - `background-color: #006814`
+          - hover 시 `background-color: #39fd72`
+          - `cursor: pointer`
+          - disalbled 됐을 경우 `background-color: #7e7e7e`
       - 타일 버튼
+        - `button` 엘리먼트이다.
+        - 다음과 같은 스타일을 가진다.
+          - 우선 공통적으로 `all: unset`으로 모든 기존 속성을 초기화한다.
+          - 세 가지 상태를 가지며, 상태별로 다음과 같은 스타일을 가진다.
+            - 보드 영역이 아님
+              - (정의 중)
+            - 보드 영역이지만 구슬이 들어있지 않은 상태
+              - (정의 중)
+            - 보드 영역이고 구슬이 들어있는 상태
+              - (정의 중)
       - 결과 오버레이
+        - (정의 중)
     - 스토어 정의
       - 상태
+        - (정의 중)
       - 액션
+        - (정의 중)
   - 플로우 정의
     - 초기 상태
-    - 게임 진행
+      - (정의 중)
+    - 게임 진행 중
+      - (정의 중)
     - 게임 종료
+      - (정의 중)
