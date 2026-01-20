@@ -5,3 +5,74 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
 ## 요구사항 (브레이크다운 중)
 
 - 페그 솔리테어 게임 구현
+  - 프로젝트 특성 정의
+    - 구현 환경
+      - Vite + React + TypeScript + Zustand를 사용한다.
+      - Vite, React, TypeScript, Zustand는 반드시 최신 버전을 사용한다.
+    - 테스트 환경
+      - Vitest + React Testing Library를 사용한다.
+      - Vitest와 React Testing Library는 반드시 최신 버전을 사용한다.
+      - `src/` 내에 있는 각 모듈마다 해당하는 테스트 파일이 있어야 한다.
+    - 프로젝트 구조
+      - Feature-Sliced Design 구조를 사용한다.
+        - [Feature-Sliced Design의 규칙은 이 링크를 참조한다.](https://feature-sliced.design/docs/get-started/overview#concepts)
+    - 그 외의 규칙
+      - React 컴포넌트는 특별한 이유가 없으면 반드시 function 키워드 함수로 선언한다.
+      - IIFE나 React JSX 이벤트 핸들러 함수같이 익명 함수를 사용해야 하는 곳에는 반드시 화살표 함수를 사용한다.
+      - Path Aliasing을 사용한다. `src/`로 시작하는 경로는 `^/`로 시작해야 한다.
+      - JSX의 속성값 등등에 들어가는 문자열은 큰따옴표로 감싸고, 그 외(주로 JavaScript 부분) 문자열은 작은따옴표로 감싼다.
+      - 아래는 카멜케이스를 사용한다.
+        - 함수 내 지역 변수명
+          - boolean 타입을 가지는 변수명은 무조건 `is`로 시작한다.
+            - 예: 코메이지 코이시인지 여부를 boolean 타입으로 저장해놓은 변수는 `isKoishiKomeiji`로 명명한다.
+        - 원시값을 가지지 않는 const 전역 변수의 이름
+        - React 컴포넌트를 제외한 함수명
+      - 아래는 파스칼케이스를 사용한다.
+        - 사용자 정의 타입
+        - React 컴포넌트 이름
+        - enum 타입의 멤버 이름
+      - 아래는 스크리밍스네이크케이스를 사용한다.
+        - 원시값을 가지는 const 전역 변수의 이름 (즉, constant)
+        - 환경 변수의 이름
+      - 아래는 케밥케이스를 사용한다.
+        - 모듈의 파일명
+  - 모듈 정의
+    - 전반적인 앱 렌더링 정의
+      - 모든 엘리먼트의 스타일은 다음과 같다.
+        - `box-sizing: border-box`
+        - `margin: 0`
+      - `body`의 스타일은 다음과 같다.
+        - `background: white`
+        - `color: black`
+        - `width: 100vw`
+        - `height: 100dvh`
+        - `display: flex`
+        - `justify-content: center`
+        - `align-items: center`
+      - `main`은 `body`의 직속 자식 엘리먼트이며, 아래 특성을 가지고 있다.
+        - 스타일링
+          - `100vw`와 `100dvh` 중 더 낮은 값을 한 변의 길이로 가지는 정사각형이다.
+          - `display: flex`
+          - `flex-direction: column`
+          - `justify-content: center`
+          - `align-items: center`
+        - 하위 엘리먼트
+          - 어떤 컴포넌트가 들어가는가? (컴포넌트의 특징은 아래에 기술한다)
+            - 타이틀
+            - 보드
+            - 하단 컨트롤 패널
+          - 하위 엘리먼트끼리의 간격은 `main`의 한 변의 길이의 `3%`로 한다.
+    - 컴포넌트 정의
+      - 타이틀
+      - 보드
+      - 하단 컨트롤 패널
+      - UI 버튼
+      - 타일 버튼
+      - 결과 오버레이
+    - 스토어 정의
+      - 상태
+      - 액션
+  - 플로우 정의
+    - 초기 상태
+    - 게임 진행
+    - 게임 종료
