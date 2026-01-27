@@ -282,6 +282,7 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
         - `justify-content: center`
         - `align-items: center`
         - `color: white`
+        - `pointer-events: none`
         - 검은 반투명 배경
         - 2초 뒤 1초동안 페이드 아웃으로 투명화된다.
       - Text Content는 아래와 같다.
