@@ -289,3 +289,32 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
         - 남은 구슬이 1개이고, 그 하나의 구슬이 보드 정중앙에 있는 경우: `MAVERICK END!!!`
         - 남은 구슬이 1개이지만, 그 하나의 구슬이 보드 정중앙에 있진 않은 경우: `KOISHI END!`
         - 그 외의 경우: `YASUO END...`
+
+## 1차 피드백
+- 지금 React 최신 버전은 `19.2.3`이야. 이에 맞게 패키지를 업그레이드 해줘. 그리고, 이에 영향을 받는 다른 패키지도 업그레이드를 해주면 좋겠어.
+- 지금 Zustand 최신 버전은 `5.0.10`이야. 이에 맞게 패키지를 업그레이드 해줘. 그리고, 이에 영향을 받는 다른 패키지도 업그레이드를 해주면 좋겠어.
+- 지금  최신 버전은 `5.0.10`이야. 이에 맞게 패키지를 업그레이드 해줘. 그리고, 이에 영향을 받는 다른 패키지도 업그레이드를 해주면 좋겠어.
+- `main`의 스타일링에는 `.main`이라는 클래스가 아닌 그냥 `main`이라는 태그를 선택해도 돼.
+- `src/entities/game-store.ts`는 Entity 레이어에 해당돼서, 동일한 슬라이스 내 또는 그 아래 레이어의 모듈만 import할 수 있어. `src/features/game-logic/is-valid-move.ts`를 import할 수 밖에 없다면 이걸 Shared 레이어의 유틸리티 쪽으로 내려봐.
+- import했지만 쓰이지 않은 모듈, 선언되었지만 사용되지 않은 변수나 함수 등등은 제거해줬으면 좋겠어.
+- 게임 오버 오버레이 텍스트의 크기가 `4rem`, 굵기가 `700`이었으면 좋겠어.
+- `if-else`문보단 `switch-case`문을 사용해줬으면 하는 곳이 있어.
+  - `src/widgets/game-over-overlay.tsx`의 37~44번째 줄은, `text`는 `let` 키워드로 선언하지 않으면서, `gameResult`의 값에 대한 여러 분기는 `switch-case`문을 사용하도록 해줘.
+    - 예를 들면, 아래 TypeScript 유사 코드와 같이.
+      ```typescript
+      const text = (() => {
+        switch (gameResult) {
+          case ...:
+            ...;
+        }
+      }){};
+      ```
+  - `src/widgets/tile-button.tsx`에서 `boardState`의 값에 대한 분기 역시, `switch-case`문을 사용하도록 해줘.
+  - 이외에도 이런 식으로, `boolean` 타입을 제외한 원시값 변수 하나에 대한 여러 분기를 나누고자 한다면, `if-else`보단 `switch-case`문을 사용했으면 좋겠어.
+- 내가 잘못 결정한 색이 있어.
+  - 선택된 타일의 `background-color`를 ` #fafd39`가 아닌 `rgb(253, 57, 237)`로 바꿔줘.
+- 테스트가 실패하고 있어 아래를 확인하고 다시 시도해볼래?
+  - `src/entities/game-store/game-store.test.ts:80:25`
+    - 분명 `move` -> `undo` -> `move`를 했는데, `undoCount`가 `0`이 아닌 `1`이라고 되어 있어.
+  - `src/entities/game-store/game-store.test.ts:153:24`
+    - `boardAfterMove`가 `move` 이전의 `board`를 기반으로 하고 있던데, 이 `board`를 `move` 이후의 `useGameStore.getState()`에서 받아와볼래? 다름이 아니라, 배열을 받은 이후에 갱신이 이루어졌다 하더라도, 스토어는 변경된 기존 배열이 아닌 아예 새로운 배열을 가진 거라, `board`의 배열 주소값은 갱신 이전 그대로거든.
