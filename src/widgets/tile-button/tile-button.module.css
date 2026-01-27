@@ -1,0 +1,45 @@
+.tile {
+  all: unset;
+  width: 100%;
+  height: 100%;
+}
+
+.tile:disabled {
+  background-color: white;
+}
+
+.empty {
+  background-color: #006814;
+  cursor: pointer;
+}
+
+.empty:hover {
+  background-color: #39fd72;
+}
+
+.empty.availableMove {
+  background-color: #39e6fd;
+}
+
+.ball {
+  background-color: #006814;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ball:hover {
+  background-color: #39fd72;
+}
+
+.ball.selected {
+  background-color: #fafd39;
+}
+
+.ballCircle {
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background-color: yellow;
+}

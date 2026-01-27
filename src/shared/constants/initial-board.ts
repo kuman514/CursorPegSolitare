@@ -1,0 +1,11 @@
+import { BoardState } from '../types';
+
+export const INITIAL_BOARD: BoardState[][] = [
+  [BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE],
+  [BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE],
+  [BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL],
+  [BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.EMPTY, BoardState.BALL, BoardState.BALL, BoardState.BALL],
+  [BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.BALL],
+  [BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE],
+  [BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE, BoardState.BALL, BoardState.BALL, BoardState.BALL, BoardState.NOT_APPLICABLE, BoardState.NOT_APPLICABLE],
+];
