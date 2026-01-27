@@ -13,7 +13,7 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
   - 테스트 환경
     - Vitest + React Testing Library를 사용한다.
     - Vitest와 React Testing Library는 반드시 최신 버전을 사용한다.
-    - `src/` 내에 있는 각 모듈마다 해당하는 테스트 파일이 있어야 한다.
+    - `src/` 내에 있는 각 모듈마다 해당하는 테스트 파일이 있어야 하며, 요구사항에 명시된 스펙을 테스트할 수 있어야 한다.
   - 프로젝트 구조
     - Feature-Sliced Design 구조를 사용한다.
       - [Feature-Sliced Design의 규칙은 이 링크를 참조한다.](https://feature-sliced.design/docs/get-started/overview#concepts)
@@ -111,100 +111,180 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
       - 남은 구슬이 1개이지만, 그 하나의 구슬이 보드 정중앙에 있진 않은 경우: `KOISHI END`
       - 그 외의 경우: `YASUO END`
 
-  - 모듈 정의
-    - 전반적인 앱 렌더링 정의
-      - `1rem`이 `16px`가 되도록 한다.
-      - 모든 엘리먼트의 스타일은 다음과 같다.
-        - `box-sizing: border-box`
-        - `margin: 0`
-      - `body`의 스타일은 다음과 같다.
-        - `background-color: white`
-        - `color: black`
-        - `width: 100vw`
-        - `height: 100dvh`
+- 모듈 정의
+  - 앱 상태 정의
+    - Zustand의 store를 활용하여 구현하도록 한다.
+    - 반드시 포함되어야 하는 스토어의 상태는 다음과 같다.
+      - `board`: Enumuration `BoardState`의 7행 7열 배열. 보드의 각 칸이 어떠한지를 담는다.
+        - 이 때, Enumuration `BoardState`는 다음과 같다.
+          - `NOT_APPLICABLE`(= `-1`): 플레이 영역이 아님
+          - `EMPTY`(= `0`): 빈 공간 (즉, 구슬이 없음)
+          - `BALL`(= `1`): 구슬이 있는 곳
+        - 초기 상태는 다음 모습과 같다. (참고로, `#`는 플레이 영역이 아닌 곳, `.`는 빈 공간, `O`는 구슬)
+          ```
+          ##OOO##
+          ##OOO##
+          OOOOOOO
+          OOO.OOO
+          OOOOOOO
+          ##OOO##
+          ##OOO##
+          ```
+      - `history`: `{ orig: Coords; dest: Coords }`의 배열. 게임 중 어디서 어디로 구슬을 옮겼는지를 담는다. 이는 실행 취소 등등에 활용된다.
+        - 이 때, `Coords`는 `{ row: number; col: number }`이다.
+        - 초기 상태는 빈 배열이다. 즉, `[]`이다.
+      - `undoCount`: 후술할 `move`가 호출되기 전, 후술할 `undo`를 마지막으로 호출한 횟수. `number`이다.
+        - 초기 상태는 `0`이다.
+      - `selected`: `Coords`이며, 선택된 구슬의 위치를 나타낸다.
+        - 초기 상태는 `{ row: -1000, col: -1000 }`이다.
+    - 반드시 포함되어야 하는 스토어의 액션은 다음과 같다.
+      - `move(orig: Coords, dest: Coords): void`
+        - `orig`로 명시된 좌표에서 `dest`로 명시된 좌표로 이동시키는 함수.
+        - 반드시 다음 조건을 만족시킬 때 이동시켜야 한다.
+          - `orig`와 `dest` 모두 좌표 범위 내에 있어야 한다.
+          - `orig.row === dest.row && (orig.col === dest.col - 2 || orig.col === dest.col + 2)` 또는 `orig.col === dest.col && (orig.row === dest.row - 2 || orig.row === dest.row + 2)`
+          - `orig`와 `dest` 사이의 그 한 칸에는 반드시 구슬이 있어야 한다.
+        - 구슬이 성공적으로 이동했을 경우 다음과 같은 작업을 한다.
+          - `dest`에 해당하는 좌표는 빈 공간으로 전환시킨다.
+          - `history[history.length - undoCount - 1]` 바로 뒷부분에 이 움직임에 대해 기록한다.
+          - `undoCount`를 `0`으로 초기화한다.
+          - `selected`를 `{ row: -1000, col: -1000 }`으로 초기화한다.
+      - `undo(): void`
+        - `history`를 기반으로 구슬의 움직임을 되돌리는 함수.
+        - `history`의 `length`가 `0`이라면 (즉, `history`가 비어있다면) 실행 취소를 하지 않아도 된다.
+        - `history.length - undoCount - 1`가 `-1`인 경우에도 실행 취소를 하지 않아도 된다.
+        - `history[history.length - undoCount - 1]`에 있는 엘리먼트를 바탕으로, `dest`에 있었던 구슬을 `orig`로 다시 되돌아가게 하고, `orig`와 `dest` 사이의 그 한 칸에는 구슬을 다시 되돌려놓는다.
+        - 성공적으로 되돌렸다면 다음과 같은 작업을 한다.
+          - `undoCount`를 `1` 증가시킨다.
+          - `selected`를 `{ row: -1000, col: -1000 }`으로 초기화한다.
+        - 후술할 `redo` 함수도 `history`를 활용해야 하기 때문에, `undo`를 했다고 해서 바로 `history`를 `pop`해서는 안 된다.
+      - `redo(): void`
+        - `history`를 기반으로 구슬의 움직임을 다시 실행하는 함수.
+        - `undoCount`가 `0`이라면 (즉, 이미 최신 상태라면) 다시 실행을 하지 않아도 된다.
+        - `history[history.length - undoCount]`에 있는 엘리먼트를 바탕으로, `orig`에 있었던 구슬을 `dest`로 다시 되돌아가게 하고, `orig`와 `dest` 사이의 그 한 칸에는 빈 공간으로 다시 만든다.
+        - 성공적으로 재실행했다면 다음과 같은 작업을 한다.
+          - `undoCount`를 `1` 감소시킨다.
+          - `selected`를 `{ row: -1000, col: -1000 }`으로 초기화한다.
+      - `reset(): void`
+        - 게임을 다시 시작할 목적으로 게임의 모든 상태를 초기화시키는 함수.
+        - 모든 상태를 초기 상태로 되돌려놓는다.
+  - 전반적인 앱 렌더링 정의
+    - `1rem`이 `16px`가 되도록 한다.
+    - 모든 엘리먼트의 스타일은 다음과 같다.
+      - `box-sizing: border-box`
+      - `margin: 0`
+    - `body`의 스타일은 다음과 같다.
+      - `background-color: white`
+      - `color: black`
+      - `width: 100vw`
+      - `height: 100dvh`
+      - `display: flex`
+      - `justify-content: center`
+      - `align-items: center`
+    - `main`은 `body`의 직속 자식 엘리먼트이며, 아래 특성을 가지고 있다.
+      - 스타일링
+        - `100vw`와 `100dvh` 중 더 낮은 값을 한 변의 길이로 가지는 정사각형이다.
         - `display: flex`
+        - `flex-direction: column`
         - `justify-content: center`
         - `align-items: center`
-      - `main`은 `body`의 직속 자식 엘리먼트이며, 아래 특성을 가지고 있다.
-        - 스타일링
-          - `100vw`와 `100dvh` 중 더 낮은 값을 한 변의 길이로 가지는 정사각형이다.
-          - `display: flex`
-          - `flex-direction: column`
-          - `justify-content: center`
-          - `align-items: center`
-        - 하위 엘리먼트
-          - 어떤 컴포넌트가 들어가는가? (컴포넌트의 특징은 "컴포넌트 정의"에서 기술한다)
-            - 타이틀
-            - 보드
-            - 하단 컨트롤 패널
-          - 하위 엘리먼트끼리의 간격은 `main`의 한 변의 길이의 `3%`로 한다.
-    - 컴포넌트 정의
-      - 타이틀
-        - `h1` 엘리먼트이다.
-        - `CursorPegSolitare`라는 Text Content를 가진다.
-        - `font-weight: 700`이다.
-        - 스크린이 640px 미만일 경우 폰트 사이즈는 `1rem`, 그 이상일 경우 `1.5rem`이어야 한다.
-      - 보드
-        - `div` 엘리먼트이다.
-        - 다음과 같은 스타일을 가진다.
-          - `width: 75%`
-          - `height: 75%`
-          - `display: grid`
-          - `grid-template-rows: repeat(9, 1fr)`
-          - `grid-template-columns: repeat(9, 1fr)`
-        - 총 81개의 타일 버튼을 가진다. (타일 버튼의 특징은 "타일 버튼"에서 기술한다)
-      - 하단 컨트롤 패널
-        - `div` 엘리먼트이다.
-        - 다음과 같은 스타일을 가진다.
-          - `display: flex`
-          - `flex-direction: row`
-          - `justify-content: center`
-          - `align-items: center`
-          - `gap: 0.5rem`
-          - `border-radius: 0.5rem`
-        - 세 가지 상태를 가지며, 상태에 따라 다음 엘리먼트를 가진다.
-          - 초기 상태
-            - 실행 취소 UI 버튼 (비활성화)
-            - 리셋 UI 버튼 (비활성화)
-          - 게임 진행 중
-            - 실행 취소 UI 버튼
-            - 리셋 UI 버튼
-          - 게임 종료
-            - 실행 취소 UI 버튼 (비활성화)
-            - 리셋 UI 버튼
-      - UI 버튼
+      - 하위 엘리먼트
+        - 어떤 컴포넌트가 들어가는가? (컴포넌트의 특징은 "컴포넌트 정의"에서 기술한다)
+          - 타이틀
+          - 보드
+          - 하단 컨트롤 패널
+        - 하위 엘리먼트끼리의 간격은 `1rem`으로 한다.
+  - 컴포넌트 요구사항
+    - 타이틀
+      - `h1` 엘리먼트이다.
+      - `CursorPegSolitare`라는 Text Content를 가진다.
+      - `font-weight: 700`이다.
+      - 스크린이 640px 미만일 경우 폰트 사이즈는 `1rem`, 그 이상일 경우 `1.5rem`이어야 한다.
+    - 보드
+      - `div` 엘리먼트이다.
+      - 다음과 같은 스타일을 가진다.
+        - `width: 75%`
+        - `height: 75%`
+        - `display: grid`
+        - `grid-template-rows: repeat(7, 1fr)`
+        - `grid-template-columns: repeat(7, 1fr)`
+      - 총 49개의 타일 버튼을 가진다. (타일 버튼의 특징은 "타일 버튼"에서 기술한다)
+    - 하단 컨트롤 패널
+      - `div` 엘리먼트이다.
+      - 다음과 같은 스타일을 가진다.
+        - `display: flex`
+        - `flex-direction: row`
+        - `justify-content: center`
+        - `align-items: center`
+        - `gap: 0.5rem`
+        - `border-radius: 0.5rem`
+      - 다음 엘리먼트를 가진다.
+        - 실행 취소 UI 버튼
+          - 스토어의 `undo`를 실행한다.
+          - 스토어의 액션에서 상술한 `undo`를 실행하지 않는 조건에서는 비활성화한다.
+        - 다시 실행 UI 버튼
+          - 스토어의 `redo`를 실행한다.
+          - 스토어의 액션에서 상술한 `redo`를 실행하지 않는 조건에서는 비활성화한다.
+        - 리셋 UI 버튼
+          - 스토어의 `reset`을 실행한다.
+    - UI 버튼
+      - `button` 엘리먼트이다.
+      - 다음과 같은 스타일을 가진다.
+        - 우선 `all: unset`으로 모든 기존 속성을 초기화한다.
+        - `color: white`
+        - `font-size: 1rem`
+        - `padding: 0.5rem 0.75rem`
+        - `background-color: #006814`
+        - hover 시 `background-color: #39fd72`
+        - `cursor: pointer`
+        - disalbled 됐을 경우 `background-color: #7e7e7e`
+    - 타일 버튼
+      - 공통
         - `button` 엘리먼트이다.
         - 다음과 같은 스타일을 가진다.
           - 우선 `all: unset`으로 모든 기존 속성을 초기화한다.
-          - `color: white`
-          - `font-size: 1rem`
-          - `padding: 0.5rem 0.75rem`
+          - `width: 100%`
+          - `height: 100%`
+        - 좌표상의 행을 의미하는 `row`와 좌표상의 열을 의미하는 `col`을 Props로 받아들인다.
+        - 스토어로부터 `board[row][col]`를 받아와, 보드의 해당 칸의 상태를 가져온다.
+        - 스토어로부터 `selected`를 받아와, 선택한 타일의 위치를 확인한다.
+      - `NOT_APPLICABLE` 상태
+        - `disalbled`이다.
+        - 다음과 같은 스타일을 가진다.
+          - `background-color: white`
+      - `EMPTY` 상태
+        - Text Content가 비어있고, 자식 엘리먼트가 없다.
+        - 다음과 같은 스타일을 가진다.
           - `background-color: #006814`
           - hover 시 `background-color: #39fd72`
           - `cursor: pointer`
-          - disalbled 됐을 경우 `background-color: #7e7e7e`
-      - 타일 버튼
-        - `button` 엘리먼트이다.
+          - `BALL`인 어떤 타일이 선택되었을 때, 선택된 구슬이 이동 가능한 곳이라면, `background-color: #39e6fd`
+        - `BALL`인 어떤 타일이 선택되었을 때, 선택된 구슬이 이동 가능한 곳에 해당할 때 클릭하면 스토어의 `move(selected, { row, col })`를 호출한다.
+      - `BALL` 상태
+        - 노랑 동그라미를 자식 엘리먼트로 가진다.
         - 다음과 같은 스타일을 가진다.
-          - 우선 공통적으로 `all: unset`으로 모든 기존 속성을 초기화한다.
-          - 세 가지 상태를 가지며, 상태별로 다음과 같은 스타일을 가진다.
-            - 보드 영역이 아님
-              - (정의 중)
-            - 보드 영역이지만 구슬이 들어있지 않은 상태
-              - (정의 중)
-            - 보드 영역이고 구슬이 들어있는 상태
-              - (정의 중)
-      - 결과 오버레이
-        - (정의 중)
-    - 스토어 정의
-      - 상태
-        - (정의 중)
-      - 액션
-        - (정의 중)
-  - 플로우 정의
-    - 초기 상태
-      - (정의 중)
-    - 게임 진행 중
-      - (정의 중)
-    - 게임 종료
-      - (정의 중)
+          - `background-color: #006814`
+          - hover 시 `background-color: #39fd72`
+          - `cursor: pointer`
+          - 선택되었을 때, `background-color: #fafd39`
+        - 클릭 시 해당 타일이 선택된다.
+    - 게임 오버 오버레이
+      - `section` 엘리먼트이다.
+      - 더 이상 움직일 수 있는 구슬이 없을 때 등장한다. 그 외의 경우 사라져 있는다.
+      - 다음과 같은 스타일을 가진다.
+        - `position: fixed`
+        - `left: 0`
+        - `top: 0`
+        - `width: 100vw`
+        - `height: 100dvh`
+        - `display: flex`
+        - `flex-direction: column`
+        - `justify-content: center`
+        - `align-items: center`
+        - `color: white`
+        - 검은 반투명 배경
+        - 2초 뒤 1초동안 페이드 아웃으로 투명화된다.
+      - Text Content는 아래와 같다.
+        - 남은 구슬이 1개이고, 그 하나의 구슬이 보드 정중앙에 있는 경우: `MAVERICK END!!!`
+        - 남은 구슬이 1개이지만, 그 하나의 구슬이 보드 정중앙에 있진 않은 경우: `KOISHI END!`
+        - 그 외의 경우: `YASUO END...`
