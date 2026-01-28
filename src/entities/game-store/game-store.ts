@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { BoardState } from '^/shared/types';
 import type { Coords, MoveHistory } from '^/shared/types';
 import { INITIAL_BOARD } from '^/shared/constants/initial-board';
@@ -33,13 +34,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 보드 상태 업데이트
     const newBoard = board.map((row) => [...row]);
-    
+
     // orig를 빈 공간으로
     newBoard[orig.row][orig.col] = BoardState.EMPTY;
-    
+
     // dest를 구슬로
     newBoard[dest.row][dest.col] = BoardState.BALL;
-    
+
     // 중간을 빈 공간으로
     const middleRow = (orig.row + dest.row) / 2;
     const middleCol = (orig.col + dest.col) / 2;
@@ -78,11 +79,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 보드 상태 되돌리기
     const newBoard = board.map((row) => [...row]);
-    
+
     // dest에 있던 구슬을 orig로 되돌림
     newBoard[dest.row][dest.col] = BoardState.EMPTY;
     newBoard[orig.row][orig.col] = BoardState.BALL;
-    
+
     // 중간에 구슬을 다시 되돌림
     const middleRow = (orig.row + dest.row) / 2;
     const middleCol = (orig.col + dest.col) / 2;
@@ -108,11 +109,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 보드 상태 다시 실행
     const newBoard = board.map((row) => [...row]);
-    
+
     // orig에 있던 구슬을 dest로 이동
     newBoard[orig.row][orig.col] = BoardState.EMPTY;
     newBoard[dest.row][dest.col] = BoardState.BALL;
-    
+
     // 중간을 빈 공간으로
     const middleRow = (orig.row + dest.row) / 2;
     const middleCol = (orig.col + dest.col) / 2;
@@ -136,7 +137,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   selectTile: (coords: Coords) => {
     const { board, selected } = get();
-    
+
     // 같은 타일을 클릭하면 선택 해제
     if (selected.row === coords.row && selected.col === coords.col) {
       set({ selected: INITIAL_SELECTED });

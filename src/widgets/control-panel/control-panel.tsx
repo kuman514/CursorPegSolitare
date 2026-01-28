@@ -1,5 +1,6 @@
 import { useGameStore } from '^/entities/game-store/game-store';
 import { UiButton } from '^/shared/ui/ui-button/ui-button';
+
 import styles from './control-panel.module.css';
 
 export function ControlPanel() {

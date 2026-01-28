@@ -1,4 +1,5 @@
 import { BoardState } from '^/shared/types';
+
 import { getAvailableMoves } from './get-available-moves';
 
 export function hasAnyMovableBall(board: BoardState[][]): boolean {
@@ -12,5 +13,6 @@ export function hasAnyMovableBall(board: BoardState[][]): boolean {
       }
     }
   }
+
   return false;
 }

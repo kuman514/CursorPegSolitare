@@ -1,7 +1,7 @@
 import { BoardState } from '^/shared/types';
-import type { Coords } from '^/shared/types';
 import { useGameStore } from '^/entities/game-store/game-store';
 import { getAvailableMoves } from '^/features/game-logic';
+
 import styles from './tile-button.module.css';
 
 interface TileButtonProps {
@@ -67,6 +67,4 @@ export function TileButton({ row, col }: TileButtonProps) {
     default:
       return null;
   }
-
-  return null;
 }

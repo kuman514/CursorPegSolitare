@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+
 import { useGameStore } from '^/entities/game-store/game-store';
 import { hasAnyMovableBall, getGameResult } from '^/features/game-logic';
+
 import styles from './game-over-overlay.module.css';
 
 export function GameOverOverlay() {

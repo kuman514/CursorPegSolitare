@@ -1,5 +1,6 @@
 import { BoardState } from '^/shared/types';
 import type { Coords } from '^/shared/types';
+
 import { isValidMove } from './is-valid-move';
 
 export function getAvailableMoves(

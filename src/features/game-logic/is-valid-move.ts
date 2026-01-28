@@ -21,8 +21,10 @@ export function isValidMove(
   }
 
   // 같은 행이면서 열이 2칸 차이나거나, 같은 열이면서 행이 2칸 차이나야 함
-  const isSameRow = orig.row === dest.row && Math.abs(orig.col - dest.col) === 2;
-  const isSameCol = orig.col === dest.col && Math.abs(orig.row - dest.row) === 2;
+  const isSameRow =
+    orig.row === dest.row && Math.abs(orig.col - dest.col) === 2;
+  const isSameCol =
+    orig.col === dest.col && Math.abs(orig.row - dest.row) === 2;
 
   if (!isSameRow && !isSameCol) {
     return false;

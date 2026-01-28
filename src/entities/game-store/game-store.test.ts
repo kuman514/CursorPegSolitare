@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+
 import { BoardState } from '^/shared/types';
-import { useGameStore } from './game-store';
 import { INITIAL_BOARD } from '^/shared/constants/initial-board';
 import { INITIAL_SELECTED } from '^/shared/constants/initial-selected';
+
+import { useGameStore } from './game-store';
 
 describe('game-store', () => {
   beforeEach(() => {
@@ -33,10 +35,8 @@ describe('game-store', () => {
 
   describe('move', () => {
     it('should move ball successfully', () => {
-      const { move, board } = useGameStore.getState();
-
       // 3,1에서 3,3으로 이동 (중간에 3,2에 구슬이 있음)
-      move({ row: 3, col: 1 }, { row: 3, col: 3 });
+      useGameStore.getState().move({ row: 3, col: 1 }, { row: 3, col: 3 });
 
       const newBoard = useGameStore.getState().board;
       expect(newBoard[3][1]).toBe(BoardState.EMPTY);
@@ -144,7 +144,9 @@ describe('game-store', () => {
       const { move, redo } = useGameStore.getState();
 
       move({ row: 3, col: 1 }, { row: 3, col: 3 });
-      const boardAfterMove = useGameStore.getState().board.map((row) => [...row]);
+      const boardAfterMove = useGameStore
+        .getState()
+        .board.map((row) => [...row]);
 
       redo();
 

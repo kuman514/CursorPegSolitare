@@ -6,7 +6,11 @@ interface UiButtonProps {
   disabled?: boolean;
 }
 
-export function UiButton({ children, onClick, disabled = false }: UiButtonProps) {
+export function UiButton({
+  children,
+  onClick,
+  disabled = false,
+}: UiButtonProps) {
   return (
     <button className={styles.button} onClick={onClick} disabled={disabled}>
       {children}
