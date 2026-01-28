@@ -339,7 +339,7 @@ Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프�
 - ~~`if-else`문보단 `switch-case`문을 사용~~ (완료)
   - ~~`src/widgets/game-over-overlay.tsx`의 37~44번째 줄~~ (완료)
   - ~~`src/widgets/tile-button.tsx`의 `boardState`의 값에 대한 모든 분기~~ (완료)
-- 선택된 타일의 `background-color`를 ` #fafd39`가 아닌 `rgb(253, 57, 237)`로
+- ~~선택된 타일의 `background-color`를 ` #fafd39`가 아닌 `#fd39ed`로~~ (완료)
 - ~~테스트 실패 현상 해결하기~~ (완료)
   - ~~`src/entities/game-store/game-store.test.ts:80:25`~~ (완료)
     - 두번째 `move`에서, 초기 상태로 돌아온 `board`에 대해, 움직일 수 없는 구슬인 3행 4열 구슬을 옮기는 코드를 썼나 봄.
