@@ -16,57 +16,56 @@ export function TileButton({ row, col }: TileButtonProps) {
   const selectTile = useGameStore((state) => state.selectTile);
 
   const boardState = board[row][col];
-  const isSelected =
-    selected.row === row && selected.col === col;
+  const isSelected = selected.row === row && selected.col === col;
   const availableMoves = getAvailableMoves(board, selected);
   const isAvailableMove = availableMoves.some(
     (move) => move.row === row && move.col === col,
   );
 
   const handleClick = () => {
-    if (boardState === BoardState.NOT_APPLICABLE) {
-      return;
-    }
-
-    if (boardState === BoardState.BALL) {
-      selectTile({ row, col });
-      return;
-    }
-
-    if (boardState === BoardState.EMPTY && isAvailableMove) {
-      move(selected, { row, col });
-      return;
+    switch (boardState) {
+      case BoardState.BALL:
+        selectTile({ row, col });
+        break;
+      case BoardState.EMPTY:
+        if (isAvailableMove) {
+          move(selected, { row, col });
+        }
+        break;
     }
   };
 
-  if (boardState === BoardState.NOT_APPLICABLE) {
-    return (
-      <button className={styles.tile} disabled>
-        {/* 빈 내용 */}
-      </button>
-    );
-  }
-
-  if (boardState === BoardState.EMPTY) {
-    const className = `${styles.tile} ${styles.empty} ${
-      isAvailableMove ? styles.availableMove : ''
-    }`;
-    return (
-      <button className={className} onClick={handleClick}>
-        {/* 빈 내용 */}
-      </button>
-    );
-  }
-
-  if (boardState === BoardState.BALL) {
-    const className = `${styles.tile} ${styles.ball} ${
-      isSelected ? styles.selected : ''
-    }`;
-    return (
-      <button className={className} onClick={handleClick}>
-        <div className={styles.ballCircle} />
-      </button>
-    );
+  switch (boardState) {
+    case BoardState.BALL:
+      return (
+        <button
+          className={`${styles.tile} ${styles.ball} ${
+            isSelected ? styles.selected : ''
+          }`}
+          onClick={handleClick}
+        >
+          <div className={styles.ballCircle} />
+        </button>
+      );
+    case BoardState.EMPTY:
+      return (
+        <button
+          className={`${styles.tile} ${styles.empty} ${
+            isAvailableMove ? styles.availableMove : ''
+          }`}
+          onClick={handleClick}
+        >
+          {/* 빈 내용 */}
+        </button>
+      );
+    case BoardState.NOT_APPLICABLE:
+      return (
+        <button className={styles.tile} disabled>
+          {/* 빈 내용 */}
+        </button>
+      );
+    default:
+      return null;
   }
 
   return null;

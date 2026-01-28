@@ -12,6 +12,15 @@
   pointer-events: none;
   background-color: rgba(0, 0, 0, 0.7);
   transition: opacity 1s ease-out;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .overlay {
+    font-size: 4rem;
+  }
 }
 
 .overlay.fadeOut {

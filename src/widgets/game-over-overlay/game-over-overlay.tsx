@@ -16,7 +16,7 @@ export function GameOverOverlay() {
     if (shouldShow) {
       setIsVisible(true);
       setIsFading(false);
-      
+
       const fadeTimer = setTimeout(() => {
         setIsFading(true);
       }, 2000);
@@ -34,20 +34,20 @@ export function GameOverOverlay() {
     return null;
   }
 
-  let text = '';
-  if (gameResult === 'MAVERICK_END') {
-    text = 'MAVERICK END!!!';
-  } else if (gameResult === 'KOISHI_END') {
-    text = 'KOISHI END!';
-  } else if (gameResult === 'YASUO_END') {
-    text = 'YASUO END...';
-  }
+  const text = (() => {
+    switch (gameResult) {
+      case 'MAVERICK_END':
+        return 'MAVERICK END!!!';
+      case 'KOISHI_END':
+        return 'KOISHI END!';
+      case 'YASUO_END':
+        return 'YASUO END...';
+      default:
+        return '';
+    }
+  })();
 
   const className = `${styles.overlay} ${isFading ? styles.fadeOut : ''}`;
 
-  return (
-    <section className={className}>
-      {text}
-    </section>
-  );
+  return <section className={className}>{text}</section>;
 }
