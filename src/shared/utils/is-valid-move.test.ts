@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { BoardState } from '^/shared/types';
-
+import { BoardState } from '../types';
 import { isValidMove } from './is-valid-move';
 
 describe('isValidMove', () => {

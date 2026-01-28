@@ -4,7 +4,7 @@ import { BoardState } from '^/shared/types';
 import type { Coords, MoveHistory } from '^/shared/types';
 import { INITIAL_BOARD } from '^/shared/constants/initial-board';
 import { INITIAL_SELECTED } from '^/shared/constants/initial-selected';
-import { isValidMove } from '^/features/game-logic';
+import { isValidMove } from '^/shared/utils/is-valid-move';
 
 interface GameStore {
   board: BoardState[][];

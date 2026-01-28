@@ -1,5 +1,5 @@
-import { BoardState } from '^/shared/types';
-import type { Coords } from '^/shared/types';
+import { BoardState } from '../types';
+import type { Coords } from '../types';
 
 export function isValidMove(
   board: BoardState[][],

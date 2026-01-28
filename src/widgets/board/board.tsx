@@ -1,4 +1,4 @@
-import { TileButton } from '^/widgets/tile-button/tile-button';
+import { TileButton } from './tile-button/tile-button';
 
 import styles from './board.module.css';
 
