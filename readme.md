@@ -1,6 +1,6 @@
 # CursorPegSolitare
 
-Cursor IDE agent를 이용하여 페그 솔리테어 게임을 구현하는 프로젝트.
+Cursor IDE agent를 이용하여 잉글리쉬 페그 솔리테어 게임을 구현하는 프로젝트. [플레이하기](https://cursor-peg-solitare.vercel.app/)
 
 ## 요구사항 (브레이크다운 중)
 
