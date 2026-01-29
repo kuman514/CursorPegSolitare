@@ -352,4 +352,6 @@ Cursor IDE agent를 이용하여 잉글리쉬 페그 솔리테어 게임을 구�
 - ~~사용하지 않은 import 또는 변수/함수 선언 지우기~~ (완료)
 - ~~import할 레이어 순서가 역전되었거나 동일 레이어 내 다른 슬라이스를 import한 부분 조정하기~~ (완료)
 - ~~`undo`와 `redo`가 제대로 작동하지 않음. 연관된 멤버 함수 또는 컴포넌트 확인 후 해결.~~ (완료)
-  - `move`를 완료했을 때 `history`를 `history.length - undoCount`부터는 모두 덮어씌워져야 했는데, 그 덮어씌워지고 없어져야 했을 부분이 계속 이어져 남아있었음.
+  - `move`를 완료했을 때 `history`를 `history.length - undoCount`부터는 모두 덮어씌워져야 했는데, 그 덮어씌워지고 없어져야 했을 부분을 계속 불필요하게 이어붙이는 코드를 발견함.
+  - 이는 `redo` 횟수보다 많은 `undo`를 하고 나서 `move`를 성공적으로 마칠 경우 `history`가 불필요하게 연장되어 혼란이 발생.
+  - 그래서, `move`를 완료했을 때 `history`를 `history.length - undoCount`부터는 모두 덮어씌우고 없애버리도록 변경.
