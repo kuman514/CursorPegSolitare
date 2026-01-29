@@ -42,17 +42,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     newBoard[dest.row][dest.col] = BoardState.BALL;
 
     // 중간을 빈 공간으로
-    const middleRow = (orig.row + dest.row) / 2;
-    const middleCol = (orig.col + dest.col) / 2;
+    const middleRow = Math.floor((orig.row + dest.row) / 2);
+    const middleCol = Math.floor((orig.col + dest.col) / 2);
     newBoard[middleRow][middleCol] = BoardState.EMPTY;
 
     // history 업데이트
     const insertIndex = history.length - undoCount;
-    const newHistory = [
-      ...history.slice(0, insertIndex),
-      { orig, dest },
-      ...history.slice(insertIndex),
-    ];
+    const newHistory = [...history.slice(0, insertIndex), { orig, dest }];
 
     set({
       board: newBoard,
@@ -85,8 +81,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     newBoard[orig.row][orig.col] = BoardState.BALL;
 
     // 중간에 구슬을 다시 되돌림
-    const middleRow = (orig.row + dest.row) / 2;
-    const middleCol = (orig.col + dest.col) / 2;
+    const middleRow = Math.floor((orig.row + dest.row) / 2);
+    const middleCol = Math.floor((orig.col + dest.col) / 2);
     newBoard[middleRow][middleCol] = BoardState.BALL;
 
     set({
@@ -115,8 +111,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     newBoard[dest.row][dest.col] = BoardState.BALL;
 
     // 중간을 빈 공간으로
-    const middleRow = (orig.row + dest.row) / 2;
-    const middleCol = (orig.col + dest.col) / 2;
+    const middleRow = Math.floor((orig.row + dest.row) / 2);
+    const middleCol = Math.floor((orig.col + dest.col) / 2);
     newBoard[middleRow][middleCol] = BoardState.EMPTY;
 
     set({

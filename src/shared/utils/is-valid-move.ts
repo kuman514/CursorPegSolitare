@@ -41,8 +41,8 @@ export function isValidMove(
   }
 
   // orig와 dest 사이의 한 칸에 구슬이 있어야 함
-  const middleRow = (orig.row + dest.row) / 2;
-  const middleCol = (orig.col + dest.col) / 2;
+  const middleRow = Math.floor((orig.row + dest.row) / 2);
+  const middleCol = Math.floor((orig.col + dest.col) / 2);
 
   if (board[middleRow][middleCol] !== BoardState.BALL) {
     return false;
